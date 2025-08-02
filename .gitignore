@@ -34,3 +34,5 @@
 build/
 .cache/
 vcpkg_installed/
+CMakeUserPresets.json
+CMakeUserPresets.jsona

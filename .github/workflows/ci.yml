@@ -1,0 +1,42 @@
+# .github/workflows/ci.yml
+name: C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake g++
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgGitVersion: 2023.11.20
+        vcpkgDirectory: '${{ runner.workspace }}/vcpkg'
+        installPackagesFromManifest: true     # 开启 manifest 模式
+
+    - name: Create build directory
+      run: mkdir build
+
+    - name: Configure CMake with vcpkg
+      run: |
+          cmake -B build -S . \
+          -DCMAKE_TOOLCHAIN_FILE=${{ runner.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+
+    - name: Build project
+      run: cmake --build build
+
+    - name: Run tests
+      run: ctest --test-dir build --output-on-failure

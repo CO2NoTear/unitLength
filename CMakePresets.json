@@ -1,10 +1,36 @@
 {
-  "version": 2,
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
   "configurePresets": [
     {
-      "name": "debug",
+      "name": "common",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_BUILD_TYPE": "Debug"
+      },
+      "environment": {
+        "VCPKG_ROOT": "$env{VCPKG_PATH}"
+      }
+    },
+    {
+      "name": "linux-macos",
+      "inherits": "common",
+      "condition": {
+        "type": "inList",
+        "string": "${hostSystemName}",
+        "list": [
+          "Linux",
+          "Darwin"
+        ]
+      },
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake"
       }
     }
   ]
